@@ -14,7 +14,6 @@ from sqlalchemy.sql.functions import random
 
 import cfg
 from container.emotionalRecognitionContainer import EmotionalRecognitionContainer
-from container.mainContainer import Container
 from container.severalWhispersContainer import SeveralWhispersContainer
 from container.whisperContainer import WhisperContainer
 from container.convertAudioContainer import ConvertAudioContainer
@@ -33,17 +32,11 @@ logger = logging.getLogger('uvicorn.error')
 app = FastAPI()
 
 
-@app.api_route('/')
-@inject
-async def index(service: Service = Depends(Provide[Container.service])):
-    result = await service.process()
-    return {'result': result}
 
 
 @app.on_event("startup")
 @inject
 async def startup_event(
-        service: Service = Depends(Provide[Container.service]),
         whisperService: WhisperService = Depends(Provide[WhisperContainer.whisperService]),
         emotionalRecognitionService: EmotionalRecognitionService = Depends(Provide[EmotionalRecognitionContainer.emotionalRecognitionService]),
 ):
